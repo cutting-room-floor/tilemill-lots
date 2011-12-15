@@ -1,0 +1,6 @@
+<div class='lots fill'></div>
+<div class='lots-controls'>
+  <a class='lots-1' href='#1'>1</a>
+  <a class='lots-2' href='#2'>2</a>
+  <a class='lots-4' href='#4'>4</a>
+</div>

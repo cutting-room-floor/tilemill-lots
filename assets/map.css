@@ -1,0 +1,89 @@
+/* ### Lots ### */
+
+.lots-controls {
+  position:absolute;
+  left:10px;
+  top:70px;
+  width:90px;
+  z-index:10;
+  }
+
+.lots-controls a {
+  width:29px;
+  height:20px;
+  background:url(/assets/tilemill/images/mask-48-90.png);
+  color:#fff;
+  margin-right:1px;
+  float:left;
+  text-align:center;
+  }
+
+.lots-controls a.lots-1 {
+  border-radius:3px 0px 0px 3px;
+  }
+
+.lots-controls a.lots-4 {
+  width:28px;
+  border-radius:0px 3px 3px 0px;
+  }
+
+.zoom-display.compact {
+  bottom:0px;
+  right:0px;
+  top:auto;
+  left:auto;
+  padding:5px;
+  border-radius:3px 0px 0px 0px;
+  width:20px;
+  }
+
+.lots.maps-1 .zoom-display.compact,
+.lots.maps-2 .wax-legends,
+.lots.maps-2 .wax-tooltip,
+.lots.maps-4 .wax-legends,
+.lots.maps-4 .wax-tooltip { display:none; }
+
+.lots.maps-2 #map-0,
+.lots.maps-4 #map-0 {
+  top:0px;
+  bottom:auto;
+  height:50%;
+  border-bottom:1px solid #ccc;
+  }
+
+.lots.maps-2 #map-1,
+.lots.maps-4 #map-1 {
+  top:auto;
+  bottom:0px;
+  height:50%;
+  }
+
+.lots.maps-4 #map-1 {
+  top:0px;
+  bottom:auto;
+  border-left:1px solid #ccc;
+  border-bottom:1px solid #ccc;
+  }
+
+.lots.maps-4 #map-0,
+.lots.maps-4 #map-2 {
+  left:0px;
+  right:auto;
+  width:50%;
+  }
+
+.lots.maps-4 #map-1,
+.lots.maps-4 #map-3 {
+  left:auto;
+  right:0px;
+  width:50%;
+  }
+
+.lots.maps-4 #map-2,
+.lots.maps-4 #map-3 {
+  top:auto;
+  bottom:0px;
+  height:50%;
+  }
+
+.lots.maps-4 #map-3 { border-left:1px solid #ccc; }

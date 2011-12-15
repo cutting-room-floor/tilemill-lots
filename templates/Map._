@@ -1,0 +1,12 @@
+<% if (obj === 'map-0') { %>
+<div id='<%=obj%>' class='fill'>
+  <div class='zoom-display'>Zoom <span class='zoom'></span></div>
+  <div class='zoom-display compact'><span class='zoom'></span></div>
+  <a href='#wax-fullscreen' class='wax-fullscreen'></a>
+</div>
+<% } else { %>
+<div id='<%=obj%>' class='fill'>
+  <div class='zoom-display compact'><span class='zoom'></span></div>
+</div>
+<% } %>
+
