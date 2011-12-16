@@ -1,7 +1,8 @@
 view = Backbone.View.extend();
 
 view.prototype.events = {
-    'click .lots-controls a': 'resize'
+    'click .lots-controls a': 'resize',
+    'click a[href=#wax-fullscreen]': 'fullscreen'
 };
 
 view.prototype.initialize = function() {
@@ -9,6 +10,7 @@ view.prototype.initialize = function() {
         'render',
         'attach',
         'resize',
+        'fullscreen',
         'more',
         'less',
         'syncZoom',
@@ -130,6 +132,11 @@ view.prototype.attach = function() {
             $(map.controls.legend.element()).remove();
         }
     }.bind(this));
+};
+
+view.prototype.fullscreen = function(ev) {
+    $('body').toggleClass('wax-fullscreen-view');
+    return false;
 };
 
 // Hook in to project view with an augment.

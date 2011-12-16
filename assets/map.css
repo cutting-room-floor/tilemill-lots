@@ -8,8 +8,13 @@
   z-index:10;
   }
 
+.icon.lots-1 { background:url(/assets/tilemill-lots/sprite.png) 0px 0px no-repeat; }
+.icon.lots-2 { background:url(/assets/tilemill-lots/sprite.png) -20px 0px no-repeat; }
+.icon.lots-4 { background:url(/assets/tilemill-lots/sprite.png) -40px 0px no-repeat; }
+
 .lots-controls a {
-  width:29px;
+  padding:0px 4px 0px 5px;
+  width:20px;
   height:20px;
   background:url(/assets/tilemill/images/mask-48-90.png);
   color:#fff;
@@ -23,7 +28,7 @@
   }
 
 .lots-controls a.lots-4 {
-  width:28px;
+  padding-left:4px;
   border-radius:0px 3px 3px 0px;
   }
 
@@ -32,8 +37,8 @@
   right:0px;
   top:auto;
   left:auto;
-  padding:5px;
   border-radius:3px 0px 0px 0px;
+  padding:0px;
   width:20px;
   }
 
@@ -48,7 +53,6 @@
   top:0px;
   bottom:auto;
   height:50%;
-  border-bottom:1px solid #ccc;
   }
 
 .lots.maps-2 #map-1,
@@ -61,8 +65,6 @@
 .lots.maps-4 #map-1 {
   top:0px;
   bottom:auto;
-  border-left:1px solid #ccc;
-  border-bottom:1px solid #ccc;
   }
 
 .lots.maps-4 #map-0,
@@ -86,4 +88,9 @@
   height:50%;
   }
 
-.lots.maps-4 #map-3 { border-left:1px solid #ccc; }
+.lots.maps-2 #map-1 { border-top:1px solid #666; }
+.lots.maps-4 #map-1,
+.lots.maps-4 #map-3 { border-left:1px solid #666; }
+.lots.maps-4 #map-2,
+.lots.maps-4 #map-3 { border-top:1px solid #666; }
+
