@@ -42,11 +42,7 @@
   width:20px;
   }
 
-.lots.maps-1 .zoom-display.compact,
-.lots.maps-2 .wax-legends,
-.lots.maps-2 .wax-tooltip,
-.lots.maps-4 .wax-legends,
-.lots.maps-4 .wax-tooltip { display:none; }
+.lots.maps-1 .zoom-display.compact { display:none; }
 
 .lots.maps-2 #map-0,
 .lots.maps-4 #map-0 {

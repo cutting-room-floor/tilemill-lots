@@ -16,6 +16,17 @@ view.prototype.initialize = function() {
         'syncZoom',
         'syncCenter'
     );
+
+    var tooltip = wax.tooltip;
+    tooltip.prototype.getTooltip = function(feature, context) {
+        if (!$('.map .wax-tooltip').size())
+            $('.map').append("<div class='wax-tooltip wax-tooltip-0'></div>");
+        $('.map .wax-tooltip').html(feature);
+        return $('.map .wax-tooltip').get(0);
+    };
+
+    this.locked = { zoom:false, center:false };
+    this.tooltip = new tooltip();
     this.map = false;
     this.maps = [];
     this.model.bind('saved', this.attach);
@@ -39,6 +50,11 @@ view.prototype.more = function() {
     var map = new com.modestmaps.Map('map-'+i,
         new wax.mm.connector(this.model.attributes));
 
+    map.index = i;
+    map.controls = {};
+    map.controls.interaction =
+        wax.mm.interaction(map, _({callbacks:this.tooltip}).extend(this.model.attributes));
+
     var center = this.model.get('center');
     map.setCenterZoom(new com.modestmaps.Location(
         center[1],
@@ -47,8 +63,13 @@ view.prototype.more = function() {
     map.addCallback('panned', _(this.syncCenter).throttle(20));
     $('.zoom-display .zoom', map.parent).text(center[2] + i);
 
+
     this.maps.push(map);
     this.$('.lots').attr('class', 'lots fill maps-' + this.maps.length);
+
+    map.addCallback('zoomed', this.syncZoom);
+    map.addCallback('extentset', this.syncZoom);
+    map.addCallback('extentset', _(this.syncCenter).throttle(20));
 
     // If not the master map, bail here.
     if (i > 0) return;
@@ -56,12 +77,9 @@ view.prototype.more = function() {
     // Add controls to master map.
     // Add references to all controls onto the map object.
     // Allows controls to be removed later on.
-    map.controls = {
-        interaction: wax.mm.interaction(map, this.model.attributes),
-        legend: wax.mm.legend(map, this.model.attributes),
-        zoomer: wax.mm.zoomer(map).appendTo(map.parent),
-        zoombox: wax.mm.zoombox(map)
-    };
+    map.controls.legend = wax.mm.legend(map, this.model.attributes).appendTo(map.parent);
+    map.controls.zoomer =  wax.mm.zoomer(map).appendTo($('.map').get(0));
+    map.controls.zoombox = wax.mm.zoombox(map);
     map.requestManager.addCallback('requesterror', _(function(manager, url) {
         $.ajax(url, { error: _(function(resp) {
             if (resp.responseText === this._error) return;
@@ -69,9 +87,6 @@ view.prototype.more = function() {
             new views.Modal(resp);
         }).bind(this) });
     }).bind(this));
-    map.addCallback('zoomed', this.syncZoom);
-    map.addCallback('extentset', this.syncZoom);
-    map.addCallback('extentset', _(this.syncCenter).throttle(20));
     this.map = map;
 };
 
@@ -82,26 +97,26 @@ view.prototype.less = function() {
 };
 
 view.prototype.syncZoom = function(map) {
-    _(this.maps).each(function(m, i) {
-        var z = map.getZoom() + i;
-        if (map !== m) m.setZoom(z);
-        $('.zoom-display .zoom', m.parent).text(z);
+    if (this.locked['zoom']) return;
+    this.locked['zoom'] = true;
+    var zoom = map.getZoom() - map.index;
+    _(this.maps).each(function(m) {
+        if (map !== m) m.setZoom(zoom + m.index);
+        $('.zoom-display .zoom', m.parent).text(zoom + m.index);
     });
+    this.locked['zoom'] = false;
 };
 
 view.prototype.syncCenter = function(map) {
+    if (this.locked['center']) return;
+    this.locked['center'] = true;
     var lat = map.getCenter().lat;
     var lon = map.getCenter().lon % 360;
     if (lon < -180) lon += 360; else if (lon > 180) lon -= 360;
-
-    // Sync map centers.
-    _(this.maps).each(function(m, i) {
+    _(this.maps).each(function(m) {
         if (map !== m) m.setCenter(map.getCenter());
     });
-
-    // Set model center.
-    if (this.map === map)
-        this.model.set({center:[lon, lat, map.getZoom()]}, {silent:true});
+    this.locked['center'] = false;
 };
 
 view.prototype.render = function() {
@@ -119,15 +134,14 @@ view.prototype.attach = function() {
         map.provider.options.maxzoom = this.model.get('maxzoom');
         map.setProvider(map.provider);
 
+        map.controls.interaction.remove();
+        map.controls.interaction = wax.mm.interaction(map, _({callbacks:this.tooltip}).extend(this.model.attributes));
+
         // Skip control manipulations for follower maps.
         if (index) return;
-
-        map.controls.interaction.remove();
-        map.controls.interaction = wax.mm.interaction(map, this.model.attributes);
-
         if (this.model.get('legend')) {
             map.controls.legend.content(this.model.attributes);
-            map.controls.legend.appendTo(this.map.parent);
+            map.controls.legend.appendTo($('.map').get(0));
         } else {
             $(map.controls.legend.element()).remove();
         }
@@ -135,7 +149,7 @@ view.prototype.attach = function() {
 };
 
 view.prototype.fullscreen = function(ev) {
-    $('body').toggleClass('wax-fullscreen-view');
+    $('.project').toggleClass('fullscreen');
     return false;
 };
 
