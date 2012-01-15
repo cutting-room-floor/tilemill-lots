@@ -54,6 +54,7 @@ view.prototype.more = function() {
     map.controls = {};
     map.controls.interaction =
         wax.mm.interaction(map, _({callbacks:this.tooltip}).extend(this.model.attributes));
+    map.controls.zoombox = wax.mm.zoombox(map);
 
     var center = this.model.get('center');
     map.setCenterZoom(new com.modestmaps.Location(
@@ -79,7 +80,6 @@ view.prototype.more = function() {
     // Allows controls to be removed later on.
     map.controls.legend = wax.mm.legend(map, this.model.attributes).appendTo(map.parent);
     map.controls.zoomer =  wax.mm.zoomer(map).appendTo($('.map').get(0));
-    map.controls.zoombox = wax.mm.zoombox(map);
     map.requestManager.addCallback('requesterror', _(function(manager, url) {
         $.ajax(url, { error: _(function(resp) {
             if (resp.responseText === this._error) return;
