@@ -42,22 +42,22 @@ view.prototype.resize = function(ev) {
 };
 
 view.prototype.more = function() {
-    if (!com.modestmaps) throw new Error('ModestMaps not found.');
-
     var i = this.maps.length;
-    this.$('.lots').append(templates.Map('map-'+i));
+    this.$('.lots').append(templates.Map('map-' + i));
 
-    var map = new com.modestmaps.Map('map-'+i,
+    var map = new MM.Map('map-' + i,
         new wax.mm.connector(this.model.attributes));
 
     map.index = i;
     map.controls = {};
     map.controls.interaction =
-        wax.mm.interaction(map, _({callbacks:this.tooltip}).extend(this.model.attributes));
+        wax.mm.interaction(map, _({
+        callbacks: this.tooltip
+    }).extend(this.model.attributes));
     map.controls.zoombox = wax.mm.zoombox(map);
 
     var center = this.model.get('center');
-    map.setCenterZoom(new com.modestmaps.Location(
+    map.setCenterZoom(new MM.Location(
         center[1],
         center[0]),
         center[2] + i);
@@ -80,7 +80,7 @@ view.prototype.more = function() {
     // Allows controls to be removed later on.
     map.controls.legend = wax.mm.legend(map, this.model.attributes).appendTo(map.parent);
     map.controls.zoomer =  wax.mm.zoomer(map).appendTo($('.map').get(0));
-    map.requestManager.addCallback('requesterror', _(function(manager, url) {
+    map.getLayerAt(0).requestManager.addCallback('requesterror', _(function(manager, url) {
         $.ajax(url, { error: _(function(resp) {
             if (resp.responseText === this._error) return;
             this._error = resp.responseText;
@@ -120,7 +120,7 @@ view.prototype.syncCenter = function(map) {
 };
 
 view.prototype.render = function() {
-    if (!com.modestmaps) throw new Error('ModestMaps not found.');
+    if (!MM) throw new Error('ModestMaps not found.');
     $(this.el).append(templates.Lots());
     _(4).chain().range().each(this.more);
     return this;
@@ -128,14 +128,17 @@ view.prototype.render = function() {
 
 view.prototype.attach = function() {
     this._error = '';
-    _(this.maps).each(function(map, index) {
-        map.provider.options.tiles = this.model.get('tiles');
-        map.provider.options.minzoom = this.model.get('minzoom');
-        map.provider.options.maxzoom = this.model.get('maxzoom');
-        map.setProvider(map.provider);
+    _(this.maps).each(_.bind(function(map, index) {
+        var layer = map.getLayerAt(0);
+        layer.provider.options.tiles = this.model.get('tiles');
+        layer.provider.options.minzoom = this.model.get('minzoom');
+        layer.provider.options.maxzoom = this.model.get('maxzoom');
+        layer.setProvider(layer.provider);
 
         map.controls.interaction.remove();
-        map.controls.interaction = wax.mm.interaction(map, _({callbacks:this.tooltip}).extend(this.model.attributes));
+        map.controls.interaction = wax.mm.interaction(map, _({
+            callbacks: this.tooltip
+        }).extend(this.model.attributes));
 
         // Skip control manipulations for follower maps.
         if (index) return;
@@ -145,7 +148,7 @@ view.prototype.attach = function() {
         } else {
             $(map.controls.legend.element()).remove();
         }
-    }.bind(this));
+    }, this));
 };
 
 view.prototype.fullscreen = function(ev) {
