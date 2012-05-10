@@ -17,16 +17,7 @@ view.prototype.initialize = function() {
         'syncCenter'
     );
 
-    var tooltip = wax.tooltip;
-    tooltip.prototype.getTooltip = function(feature, context) {
-        if (!$('.map .wax-tooltip').size())
-            $('.map').append("<div class='wax-tooltip wax-tooltip-0'></div>");
-        $('.map .wax-tooltip').html(feature);
-        return $('.map .wax-tooltip').get(0);
-    };
-
     this.locked = { zoom:false, center:false };
-    this.tooltip = new tooltip();
     this.map = false;
     this.maps = [];
     this.model.bind('saved', this.attach);
@@ -49,18 +40,23 @@ view.prototype.more = function() {
         new wax.mm.connector(this.model.attributes));
 
     map.index = i;
-    map.controls = {};
-    map.controls.interaction =
-        wax.mm.interaction(map, _({
-        callbacks: this.tooltip
-    }).extend(this.model.attributes));
-    map.controls.zoombox = wax.mm.zoombox(map);
+    map.controls = {
+        interaction: wax.mm.interaction()
+            .map(map)
+            .tilejson(this.model.attributes)
+            .on(wax.tooltip()
+                .parent(map.parent).events()),
+        zoombox: wax.mm.zoombox(map)
+    };
 
     var center = this.model.get('center');
     map.setCenterZoom(new MM.Location(
         center[1],
         center[0]),
         center[2] + i);
+    map.setZoomRange(
+        this.model.get('minzoom'),
+        this.model.get('maxzoom'));
     map.addCallback('panned', _(this.syncCenter).throttle(20));
     $('.zoom-display .zoom', map.parent).text(center[2] + i);
 
@@ -135,10 +131,7 @@ view.prototype.attach = function() {
         layer.provider.options.maxzoom = this.model.get('maxzoom');
         layer.setProvider(layer.provider);
 
-        map.controls.interaction.remove();
-        map.controls.interaction = wax.mm.interaction(map, _({
-            callbacks: this.tooltip
-        }).extend(this.model.attributes));
+        map.controls.interaction.tilejson(this.model.attributes);
 
         // Skip control manipulations for follower maps.
         if (index) return;
