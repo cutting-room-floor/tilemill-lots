@@ -23,12 +23,18 @@ view.prototype.initialize = function() {
     this.model.bind('saved', this.attach);
     this.model.bind('poll', this.attach);
     this.render().attach();
+    _.each(this.maps, function(m) {
+        m._windowResize();
+    });
 };
 
 view.prototype.resize = function(ev) {
     var size = parseInt($(ev.currentTarget).attr('href').split('#').pop(), 10);
     while (this.maps.length < size) this.more();
     while (this.maps.length > size) this.less();
+    _.each(this.maps, function(m) {
+        m._windowResize();
+    });
     return false;
 };
 
@@ -148,14 +154,3 @@ view.prototype.fullscreen = function(ev) {
     $('.project').toggleClass('fullscreen');
     return false;
 };
-
-// Hook in to project view with an augment.
-views.Project.augment({ render: function(p) {
-    p.call(this);
-    new views.Map({
-        el:this.$('.map'),
-        model:this.model
-    });
-    return this;
-}});
-
