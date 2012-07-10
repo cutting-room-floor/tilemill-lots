@@ -23,12 +23,18 @@ view.prototype.initialize = function() {
     this.model.bind('saved', this.attach);
     this.model.bind('poll', this.attach);
     this.render().attach();
+    _.each(this.maps, function(m) {
+        m._windowResize();
+    });
 };
 
 view.prototype.resize = function(ev) {
     var size = parseInt($(ev.currentTarget).attr('href').split('#').pop(), 10);
     while (this.maps.length < size) this.more();
     while (this.maps.length > size) this.less();
+    _.each(this.maps, function(m) {
+        m._windowResize();
+    });
     return false;
 };
 
@@ -131,6 +137,12 @@ view.prototype.attach = function() {
         layer.provider.options.maxzoom = this.model.get('maxzoom');
         layer.setProvider(layer.provider);
 
+        layer.provider.setZoomRange(layer.provider.options.minzoom,
+            layer.provider.options.maxzoom);
+
+        map.setZoomRange(layer.provider.options.minzoom,
+            layer.provider.options.maxzoom);
+
         map.controls.interaction.tilejson(this.model.attributes);
 
         // Skip control manipulations for follower maps.
@@ -141,21 +153,13 @@ view.prototype.attach = function() {
         } else {
             $(map.controls.legend.element()).remove();
         }
+
+        map.draw();
     }, this));
+    this.$('.zoom-display .zoom').text(this.map.getZoom());
 };
 
 view.prototype.fullscreen = function(ev) {
     $('.project').toggleClass('fullscreen');
     return false;
 };
-
-// Hook in to project view with an augment.
-views.Project.augment({ render: function(p) {
-    p.call(this);
-    new views.Map({
-        el:this.$('.map'),
-        model:this.model
-    });
-    return this;
-}});
-
