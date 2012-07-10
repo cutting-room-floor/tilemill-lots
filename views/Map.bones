@@ -137,6 +137,12 @@ view.prototype.attach = function() {
         layer.provider.options.maxzoom = this.model.get('maxzoom');
         layer.setProvider(layer.provider);
 
+        layer.provider.setZoomRange(layer.provider.options.minzoom,
+            layer.provider.options.maxzoom);
+
+        map.setZoomRange(layer.provider.options.minzoom,
+            layer.provider.options.maxzoom);
+
         map.controls.interaction.tilejson(this.model.attributes);
 
         // Skip control manipulations for follower maps.
@@ -147,7 +153,10 @@ view.prototype.attach = function() {
         } else {
             $(map.controls.legend.element()).remove();
         }
+
+        map.draw();
     }, this));
+    this.$('.zoom-display .zoom').text(this.map.getZoom());
 };
 
 view.prototype.fullscreen = function(ev) {
