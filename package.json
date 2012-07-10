@@ -2,6 +2,6 @@
     "name": "tilemill-lots",
     "description": "Preview maps at multiple zoom levels.",
     "version": "0.1.1",
-    "engines": {"tilemill":"~0.10"},
+    "engines": {"tilemill":"0.10.0"},
     "keywords": ["tilemill"]
 }
