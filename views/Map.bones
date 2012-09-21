@@ -156,7 +156,6 @@ view.prototype.attach = function() {
 
         map.draw();
     }, this));
-    this.$('.zoom-display .zoom').text(this.map.getZoom());
 };
 
 view.prototype.fullscreen = function(ev) {
