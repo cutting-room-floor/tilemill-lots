@@ -1,11 +1,11 @@
-view = Backbone.View.extend();
+view = views.Map.extend();
 
-view.prototype.events = {
+view.prototype.events = _(view.prototype.events).extend({
     'click .lots-controls a': 'resize',
     'click a[href=#wax-fullscreen]': 'fullscreen'
-};
+});
 
-view.prototype.initialize = function() {
+view.prototype.initialize = _.wrap(view.prototype.initialize, function(func) {
     _(this).bindAll(
         'render',
         'attach',
@@ -22,11 +22,11 @@ view.prototype.initialize = function() {
     this.maps = [];
     this.model.bind('saved', this.attach);
     this.model.bind('poll', this.attach);
-    this.render().attach();
+    func.call(this);
     _.each(this.maps, function(m) {
         m._windowResize();
     });
-};
+});
 
 view.prototype.resize = function(ev) {
     var size = parseInt($(ev.currentTarget).attr('href').split('#').pop(), 10);
