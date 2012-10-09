@@ -1,6 +1,6 @@
 view = views.Map.extend();
 
-view.prototype.events = _(view.prototype.events).extend({
+view.prototype.events = _(view.prototype.events || {}).extend({
     'click .lots-controls a': 'resize',
     'click a[href=#wax-fullscreen]': 'fullscreen'
 });
